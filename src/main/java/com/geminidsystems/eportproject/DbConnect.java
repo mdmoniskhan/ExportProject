@@ -1,7 +1,11 @@
 
 package com.geminidsystems.eportproject;
 
+import java.io.*;
+import java.nio.file.*;
 import java.sql.*;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 
 public class DbConnect {
     
@@ -28,20 +32,28 @@ public class DbConnect {
         }
     }
     
-    public void execute(String...queries){
-        
-        for(String query:queries){
+    public void execute(String... queries) {
+
+        for (String query : queries) {
             try {
                 ResultSet rs = st.executeQuery(query);
                 ResultSetMetaData rsmd = rs.getMetaData();
-                int columnsNumber = rsmd.getColumnCount();                     
+                int columnsNumber = rsmd.getColumnCount();
                 // Iterate through the data in the result set and display it. 
-                while (rs.next()) {
-                    //Print one row          
-                    for(int i = 1 ; i <= columnsNumber; i++){
-                        System.out.print(rs.getString(i) + " "); //Print one element of a row
+                String SAMPLE_CSV_FILE = rsmd.getTableName(1);
+                try (
+                        BufferedWriter writer = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_FILE));
+                        CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT);) {
+                    while (rs.next()) {
+                        //Print one row 
+                        for (int i = 1; i <= columnsNumber; i++) {
+                            csvPrinter.print(rs.getString(i));
+                        }
+                        csvPrinter.println();
                     }
-                    System.out.println();//Move to the next line to print the next row.           
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();
