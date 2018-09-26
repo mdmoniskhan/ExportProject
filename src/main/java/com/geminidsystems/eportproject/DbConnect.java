@@ -4,6 +4,8 @@ package com.geminidsystems.eportproject;
 import java.io.*;
 import java.nio.file.*;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
@@ -45,10 +47,7 @@ public class DbConnect {
                         BufferedWriter writer = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_FILE));
                         CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.EXCEL.withHeader(rs).withQuote('"')); 
                     while (rs.next()) {
-                        //Print one row 
-                        for (int i = 1; i <= columnsNumber; i++) {
-                            csvPrinter.print(rs.getString(i));
-                        }
+                        csvPrinter.printRecord(getQueryRecord(columnsNumber,rs,csvPrinter));
                         csvPrinter.println();
                     }
                 } catch (IOException ex) {
@@ -58,5 +57,14 @@ public class DbConnect {
                 ex.printStackTrace();
             }
         }
+    }
+
+    public ArrayList getQueryRecord(int columnsNumber, ResultSet rs, CSVPrinter csvPrinter) throws SQLException, IOException {
+        ArrayList list = new ArrayList();
+        //gets one row 
+        for (int i = 1; i <= columnsNumber; i++) {
+            list.add(rs.getString(i));
+        }
+        return list;
     }
 }
