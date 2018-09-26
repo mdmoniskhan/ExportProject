@@ -31,10 +31,10 @@ public class DbConnect {
     }
     
     public void exportQueryResultToCSV(String... queries) throws SQLException {
-        Statement st = connObj.createStatement();
 
         for (String query : queries) {
             try {
+                Statement st = connObj.createStatement();
                 ResultSet rs = st.executeQuery(query);
                 ResultSetMetaData rsmd = rs.getMetaData();
                 int columnsNumber = rsmd.getColumnCount();
