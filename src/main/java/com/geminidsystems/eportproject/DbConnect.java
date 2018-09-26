@@ -43,7 +43,7 @@ public class DbConnect {
                 try {
                        
                         BufferedWriter writer = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_FILE));
-                        CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.EXCEL.withHeader(rs)); 
+                        CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.EXCEL.withHeader(rs).withQuote('"')); 
                     while (rs.next()) {
                         //Print one row 
                         for (int i = 1; i <= columnsNumber; i++) {
