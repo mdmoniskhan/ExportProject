@@ -26,7 +26,7 @@ public class Test {
         
         db.Connect(JDBC_Url, DriverName, username, password);   //connectiong to DB
         
-        db.execute(query1,query2,query3);   //executing queries
+        db.exportQueryResultToCSV(query1,query2,query3);   //executing queries
     }
     
     public static void parameterize(){

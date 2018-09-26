@@ -9,8 +9,7 @@ import org.apache.commons.csv.CSVPrinter;
 
 public class DbConnect {
     
-    Connection connObj = null;
-    Statement st = null;
+    private Connection connObj = null;
 
     public void Connect(String JDBC_Url, String DriverName, String username, String password) {
         
@@ -20,7 +19,6 @@ public class DbConnect {
             connObj = DriverManager.getConnection(JDBC_Url,username,password);
             if(connObj != null) {
                 System.out.println("Connection to SQLite has been established.");
-                st = connObj.createStatement();
             }else{
                 System.out.println("No Connection.");
             }
@@ -32,7 +30,8 @@ public class DbConnect {
         }
     }
     
-    public void execute(String... queries) {
+    public void exportQueryResultToCSV(String... queries) throws SQLException {
+        Statement st = connObj.createStatement();
 
         for (String query : queries) {
             try {
@@ -40,10 +39,11 @@ public class DbConnect {
                 ResultSetMetaData rsmd = rs.getMetaData();
                 int columnsNumber = rsmd.getColumnCount();
                 // Iterate through the data in the result set and display it. 
-                String SAMPLE_CSV_FILE = rsmd.getTableName(1);
-                try (
+                String SAMPLE_CSV_FILE = rsmd.getTableName(1)+".csv";
+                try {
+                       
                         BufferedWriter writer = Files.newBufferedWriter(Paths.get(SAMPLE_CSV_FILE));
-                        CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT);) {
+                        CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.EXCEL.withHeader(rs)); 
                     while (rs.next()) {
                         //Print one row 
                         for (int i = 1; i <= columnsNumber; i++) {
@@ -53,7 +53,6 @@ public class DbConnect {
                     }
                 } catch (IOException ex) {
                     ex.printStackTrace();
-
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();
